@@ -108,7 +108,13 @@ Every file in Linux has **owner, group, others** access.
 Got it 👍 Let’s go through each **Disk Usage & Monitoring** command with **real examples** so it’s crystal clear:
 
 ---
-7. Disk Usage & Monitoring df -h → Disk space usage (human-readable). du -sh /path → Directory size summary. lsblk → List block devices. mount /dev/sdb1 /mnt → Mount partition. umount /mnt → Unmount partition. /etc/fstab → Defines auto-mount settings. give example of each
+7. Disk Usage & Monitoring
+8.  df -h → Disk space usage (human-readable).
+9.  du -sh /path → Directory size summary. l
+10.  sblk → List block devices.
+11.   mount /dev/sdb1 /mnt → Mount partition.
+12.   umount /mnt → Unmount partition.
+13.   /etc/fstab → Defines auto-mount settings. 
 ### **1. df -h** → Disk space usage (human-readable)
 
 ```bash
