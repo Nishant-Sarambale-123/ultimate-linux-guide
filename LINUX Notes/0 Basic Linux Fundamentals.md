@@ -105,14 +105,95 @@ Every file in Linux has **owner, group, others** access.
 
 ---
 
-## 7. Disk Usage & Monitoring
+Got it 👍 Let’s go through each **Disk Usage & Monitoring** command with **real examples** so it’s crystal clear:
 
-* `df -h` → Disk space usage (human-readable).
-* `du -sh /path` → Directory size summary.
-* `lsblk` → List block devices.
-* `mount /dev/sdb1 /mnt` → Mount partition.
-* `umount /mnt` → Unmount partition.
-* `/etc/fstab` → Defines auto-mount settings.
+---
+
+### **1. df -h** → Disk space usage (human-readable)
+
+```bash
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   20G   28G  42% /
+tmpfs           798M     0  798M   0% /dev/shm
+/dev/sdb1       100G   60G   35G  64% /mnt/data
+```
+
+✅ Shows disk partitions, total size, used space, available space, and mount points.
+
+---
+
+### **2. du -sh /path** → Directory size summary
+
+```bash
+$ du -sh /var/log
+2.3G    /var/log
+```
+
+✅ Displays total size of `/var/log` (logs often grow large).
+Use `du -sh *` inside a directory to see size of each subfolder.
+
+---
+
+### **3. lsblk** → List block devices
+
+```bash
+$ lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0   50G  0 disk
+└─sda1   8:1    0   50G  0 part /
+sdb      8:16   0  100G  0 disk
+└─sdb1   8:17   0  100G  0 part /mnt/data
+```
+
+✅ Shows all disks (`sda`, `sdb`) and their partitions (`sda1`, `sdb1`) with mount points.
+
+---
+
+### **4. mount /dev/sdb1 /mnt** → Mount partition
+
+```bash
+$ sudo mount /dev/sdb1 /mnt
+$ df -h | grep /mnt
+/dev/sdb1       100G   1G   99G   2% /mnt
+```
+
+✅ Mounted `/dev/sdb1` partition to `/mnt` directory.
+
+---
+
+### **5. umount /mnt** → Unmount partition
+
+```bash
+$ sudo umount /mnt
+$ df -h | grep /mnt
+# (No output since /mnt is unmounted)
+```
+
+✅ `/dev/sdb1` is now unmounted and no longer accessible at `/mnt`.
+
+---
+
+### **6. /etc/fstab** → Defines auto-mount settings
+
+File content example (`/etc/fstab`):
+
+```bash
+UUID=1234-5678   /mnt/data   ext4   defaults   0 0
+```
+
+* `UUID=1234-5678` → Unique identifier of disk/partition (use `blkid` to find).
+* `/mnt/data` → Mount point.
+* `ext4` → Filesystem type.
+* `defaults` → Default options.
+* `0 0` → Dump & fsck options.
+
+Now the partition auto-mounts at boot:
+
+```bash
+$ df -h | grep /mnt/data
+/dev/sdb1       100G   5G   95G   5% /mnt/data
+```
 
 ---
 
