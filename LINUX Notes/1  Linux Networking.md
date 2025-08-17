@@ -36,6 +36,133 @@ I’ll explain each command with examples, concepts, and then add **interview + 
 * `ss -tulnp` → Show listening ports (faster replacement for netstat).
 
 ---
+1. Check IP & Routing
+
+When working with Linux systems (especially in DevOps), you often need to check IP addresses, interfaces, gateways, routes, and ports.
+
+🔹 1.1 Show Network Interfaces & IPs
+Command:
+ip a
+
+Example Output:
+$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+    inet 127.0.0.1/8 scope host lo
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic eth0
+    link/ether 08:00:27:6b:8e:55 brd ff:ff:ff:ff:ff:ff
+
+
+✅ Key Points:
+
+lo → loopback (127.0.0.1)
+
+eth0 → network interface
+
+inet 192.168.1.100/24 → IP with subnet mask
+
+link/ether → MAC address
+
+state UP → interface is active
+
+👉 To check only one interface:
+
+ip a show eth0
+
+🔹 1.2 Show Routing Table
+Command:
+ip route
+
+Example Output:
+$ ip route
+default via 192.168.1.1 dev eth0 proto dhcp metric 100
+192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.100
+
+
+✅ Key Points:
+
+default via 192.168.1.1 dev eth0 → Default Gateway = 192.168.1.1
+
+192.168.1.0/24 dev eth0 → Local network route (192.168.1.x)
+
+👉 To check which gateway will be used for a destination:
+
+ip route get 8.8.8.8
+8.8.8.8 via 192.168.1.1 dev eth0 src 192.168.1.100
+
+🔹 1.3 Legacy Tool (ifconfig)
+Command:
+ifconfig
+
+Example Output:
+$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+    inet 192.168.1.100  netmask 255.255.255.0  broadcast 192.168.1.255
+    ether 08:00:27:6b:8e:55  txqueuelen 1000  (Ethernet)
+
+
+⚠️ Note: ifconfig is deprecated. Use ip instead.
+Still useful on older systems.
+
+🔹 1.4 Show Routing Table (legacy)
+Command:
+netstat -rn
+
+Example Output:
+$ netstat -rn
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Iface
+0.0.0.0         192.168.1.1     0.0.0.0         UG    eth0
+192.168.1.0     0.0.0.0         255.255.255.0   U     eth0
+
+
+✅ Similar to ip route but older syntax.
+
+🔹 1.5 Show Listening Ports
+Command:
+ss -tulnp
+
+Example Output:
+$ ss -tulnp
+Netid  State   Recv-Q  Send-Q  Local Address:Port   Peer Address:Port  Process
+tcp    LISTEN  0       128     0.0.0.0:22           0.0.0.0:*          users:(("sshd",pid=901,fd=3))
+tcp    LISTEN  0       128     127.0.0.1:5432       0.0.0.0:*          users:(("postgres",pid=1204,fd=6))
+udp    UNCONN  0       0       0.0.0.0:68           0.0.0.0:*          users:(("dhclient",pid=700,fd=5))
+
+
+✅ Key Points:
+
+tcp LISTEN 0.0.0.0:22 → SSH service listening on all interfaces
+
+127.0.0.1:5432 → PostgreSQL only accessible locally
+
+udp 0.0.0.0:68 → DHCP client
+
+⚠️ ss is faster and preferred over netstat -tulnp.
+
+✅ Interview / Scenario Tips
+
+Q1: How do you check the default gateway of a Linux server?
+A: Use ip route → look for default via …
+
+Q2: How to check which process is listening on port 8080?
+A: ss -tulnp | grep 8080
+
+Q3: Difference between ifconfig and ip?
+A: ifconfig is deprecated, ip is the modern replacement with more features.
+
+Q4: How do you troubleshoot if a server cannot reach the internet?
+A:
+
+Check IP (ip a)
+
+Check default route (ip route)
+
+Test connectivity (ping 8.8.8.8)
+
+Check DNS (cat /etc/resolv.conf)
+
+Check firewall rules (iptables -L or ufw status)
 
 ## 2. DNS Lookup & Connectivity
 
